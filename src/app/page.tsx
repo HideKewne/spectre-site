@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 // --- Icons & SVG Components ---
 
@@ -128,10 +128,56 @@ const Barcode = () => {
 export default function SpectreSystem() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([
+    { role: 'assistant', content: 'SYSTEM ONLINE. How can I assist you today?' }
+  ]);
+  const [inputValue, setInputValue] = useState('');
+  const chatEndRef = useRef<HTMLDivElement>(null);
+  const [ghostOpacity, setGhostOpacity] = useState(1);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chatMessages]);
+
+  // Spooky ghost fade on scroll (mobile) - smooth and gradual
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      const fadeStart = 50;
+      const fadeEnd = 800;
+
+      if (scrollY <= fadeStart) {
+        setGhostOpacity(1);
+      } else if (scrollY >= fadeEnd) {
+        setGhostOpacity(0);
+      } else {
+        // Eased fade - starts slow, then accelerates
+        const progress = (scrollY - fadeStart) / (fadeEnd - fadeStart);
+        const easedProgress = progress * progress; // Quadratic ease-in
+        setGhostOpacity(1 - easedProgress);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Lock body scroll when chat is open (mobile fullscreen)
+  useEffect(() => {
+    if (chatOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [chatOpen]);
 
   // Particles with fixed positions for SSR
   const particles = [
@@ -201,23 +247,28 @@ export default function SpectreSystem() {
         .font-share-tech {
           font-family: 'Share Tech Mono', monospace;
         }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
       `}</style>
 
       {/* Scanline Overlay */}
       <div className="scanlines"></div>
 
-      {/* Vignette */}
-      <div className="fixed inset-0 pointer-events-none z-40 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.8)_100%)]"></div>
-
       {/* --- TOP BAR --- */}
       <div className="relative z-30 w-full max-w-7xl mx-auto pt-6 px-4">
         <div className="flex justify-between items-center border-b border-[#39FF14]/30 pb-2 text-xs tracking-widest opacity-80 font-share-tech">
-          <div className="flex gap-4">
-            <span>Y2K SYSTEM</span>
+          <div className="flex gap-4 items-center">
+            <img src="/ghost.png" alt="Ghost" className="w-8 h-8" />
+            <span>SPECTRE SOUNDSZ™</span>
             <span className="text-[#39FF14]/50">//</span>
-            <span>SINCE 1999</span>
+            <span>SINCE 2019</span>
             <span className="text-[#39FF14]/50">//</span>
-            <span>CODE 0071</span>
+            <span>CODE 0222</span>
           </div>
           <div className="flex gap-4 items-center">
             <span className="cursor-pointer hover:text-white">@</span>
@@ -233,10 +284,10 @@ export default function SpectreSystem() {
       </div>
 
       {/* --- NAVIGATION --- */}
-      <div className="relative z-30 flex justify-center mt-4">
-        <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
+      <div className="relative z-30 flex justify-center mt-4 px-4 md:px-0">
+        <div className="relative w-full md:w-auto max-w-full" onMouseLeave={() => setActiveDropdown(null)}>
           {/* Nav Container Shape */}
-          <div className="flex items-center gap-8 px-12 py-3 border-b border-[#39FF14] bg-black/80 backdrop-blur-sm relative">
+          <div className="flex items-center gap-4 md:gap-8 px-6 md:px-12 py-3 border-b border-[#39FF14] bg-black/80 backdrop-blur-sm relative overflow-x-auto scrollbar-hide">
             {/* Decorative angled borders for nav */}
             <div className="absolute bottom-0 left-0 w-8 h-[1px] bg-[#39FF14] origin-left -rotate-45 translate-y-3 -translate-x-2"></div>
             <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#39FF14] origin-right rotate-45 translate-y-3 translate-x-2"></div>
@@ -247,7 +298,7 @@ export default function SpectreSystem() {
               return (
                 <div
                   key={item}
-                  className={`relative cursor-pointer font-orbitron tracking-widest text-sm ${isActive ? 'text-[#39FF14] glow-text' : 'text-white hover:text-[#39FF14] transition-colors'}`}
+                  className={`relative cursor-pointer font-orbitron tracking-widest text-sm whitespace-nowrap flex-shrink-0 ${isActive ? 'text-[#39FF14] glow-text' : 'text-white hover:text-[#39FF14] transition-colors'}`}
                   onMouseEnter={() => hasDropdown && setActiveDropdown(item)}
                 >
                   {item}
@@ -261,82 +312,92 @@ export default function SpectreSystem() {
 
           {/* --- ARTISTS DROPDOWN --- */}
           <div
-            className={`absolute top-full left-0 mt-4 min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'ARTISTS' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+            className={`absolute top-full left-0 pt-4 z-50 ${activeDropdown === 'ARTISTS' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
           >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-            <div className="p-4 flex flex-col gap-2 font-share-tech">
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">ACE</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">LOUISG</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">NALDEAUX</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">SAFFARA</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">CROW</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YC</a>
+            <div className="min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
+              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+              <div className="p-4 flex flex-col gap-2 font-share-tech">
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">ACE</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">LOUISG</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">NALDEAUX</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">SAFFARA</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">CROW</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YC</a>
+              </div>
             </div>
           </div>
 
           {/* --- WEBSHOP DROPDOWN --- */}
           <div
-            className={`absolute top-full left-[90px] mt-4 min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'WEBSHOP' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+            className={`absolute top-full left-[90px] pt-4 z-50 ${activeDropdown === 'WEBSHOP' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
           >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-            <div className="p-4 flex flex-col gap-2 font-share-tech">
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</a>
-              <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Accessories</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Limited Drops</a>
+            <div className="min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
+              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+              <div className="p-4 flex flex-col gap-2 font-share-tech">
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</a>
+                <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Accessories</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Limited Drops</a>
+              </div>
             </div>
           </div>
 
           {/* --- INFO DROPDOWN --- */}
           <div
-            className={`absolute top-full left-[200px] mt-4 min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'INFO' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+            className={`absolute top-full left-[200px] pt-4 z-50 ${activeDropdown === 'INFO' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
           >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-            <div className="p-4 flex flex-col gap-2 font-share-tech">
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit</a>
-              <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Spectre</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Ace</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Contact</a>
+            <div className="min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
+              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+              <div className="p-4 flex flex-col gap-2 font-share-tech">
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit</a>
+                <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Spectre</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Ace</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Contact</a>
+              </div>
             </div>
           </div>
 
           {/* --- BOOKING DROPDOWN --- */}
           <div
-            className={`absolute top-full left-[280px] mt-4 min-w-[320px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'BOOKING' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+            className={`absolute top-full left-[280px] pt-4 z-50 ${activeDropdown === 'BOOKING' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
           >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-            <div className="grid grid-cols-2 gap-0">
-              {/* Left Column */}
-              <div className="p-4 border-r border-[#39FF14]/20 flex flex-col gap-2 font-share-tech">
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Agenda</a>
-                <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Events</a>
-              </div>
-              {/* Right Column */}
-              <div className="p-4 flex flex-col gap-2 font-share-tech">
-                <div className="text-[10px] text-[#39FF14]/60 mb-1">e_sinas</div>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Previous Gigs</a>
+            <div className="min-w-[320px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
+              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+              <div className="grid grid-cols-2 gap-0">
+                {/* Left Column */}
+                <div className="p-4 border-r border-[#39FF14]/20 flex flex-col gap-2 font-share-tech">
+                  <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Agenda</a>
+                  <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+                  <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Events</a>
+                </div>
+                {/* Right Column */}
+                <div className="p-4 flex flex-col gap-2 font-share-tech">
+                  <div className="text-[10px] text-[#39FF14]/60 mb-1">e_sinas</div>
+                  <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Previous Gigs</a>
+                </div>
               </div>
             </div>
           </div>
 
           {/* --- SOCIALS DROPDOWN --- */}
           <div
-            className={`absolute top-full right-0 mt-4 min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'SOCIALS' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+            className={`absolute top-full right-0 pt-4 z-50 ${activeDropdown === 'SOCIALS' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
           >
-            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-            <div className="p-4 flex flex-col gap-2 font-share-tech">
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Instagram</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">TikTok</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Spotify</a>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YouTube</a>
+            <div className="min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
+              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+              <div className="p-4 flex flex-col gap-2 font-share-tech">
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Instagram</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">TikTok</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Spotify</a>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YouTube</a>
+              </div>
             </div>
           </div>
         </div>
@@ -366,20 +427,17 @@ export default function SpectreSystem() {
 
         {/* LOGO */}
         <div className="relative z-10 text-center transform scale-110 hover:scale-[1.15] transition-transform duration-500">
-          {/* Star flare above logo */}
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-[2px] h-24 bg-white blur-[1px]"></div>
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-24 h-[2px] bg-white blur-[1px]"></div>
-          <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-4 h-4 bg-white rounded-full blur-md shadow-[0_0_20px_white]"></div>
-
-          <h1 className="text-[120px] leading-none chrome-text select-none">
-            SPECTRE
-          </h1>
+          <img
+            src="/spectre_logo_transparent.png"
+            alt="SPECTRE"
+            className="w-[500px] h-auto select-none drop-shadow-[0_0_30px_rgba(57,255,20,0.5)]"
+          />
         </div>
 
         {/* Subtitles */}
-        <div className="relative z-10 mt-8 text-center space-y-2">
-          <h2 className="font-orbitron text-2xl tracking-[0.2em] text-white glow-text">SHOP THE FUTURE</h2>
-          <p className="text-sm tracking-widest text-[#39FF14]/80 font-share-tech">Y2K FASHION & PIXEL GEAR ++</p>
+        <div className="relative z-10 mt-2 text-center space-y-2">
+          <h2 className="font-orbitron text-2xl tracking-[0.2em] text-white glow-text">AGAINST THE MACHINE</h2>
+          <p className="text-sm tracking-widest text-[#39FF14]/80 font-share-tech">System Error: Creativity Detected ++</p>
         </div>
       </div>
 
@@ -397,7 +455,7 @@ export default function SpectreSystem() {
               <IconComputer />
             </div>
             <div>
-              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">WESHOP</h3>
+              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">WEBSHOP</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Futuristic Fashion</p>
             </div>
           </div>
@@ -412,8 +470,8 @@ export default function SpectreSystem() {
               <IconWorld />
             </div>
             <div>
-              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">INFO</h3>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Spectre System Data</p>
+              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">MUSIC</h3>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Listen Now</p>
             </div>
           </div>
 
@@ -427,11 +485,35 @@ export default function SpectreSystem() {
               <IconAlienCalendar />
             </div>
             <div>
-              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">BOOKING</h3>
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Live & Collabs</p>
+              <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">CONTACT</h3>
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Get In Touch</p>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* --- SPOTIFY PLAYER --- */}
+      <div className="relative z-20 max-w-4xl mx-auto px-4 mb-20">
+        <div className="relative border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm p-6 shadow-[0_0_20px_rgba(57,255,20,0.1)]">
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-xl"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-xl"></div>
+
+          <div className="flex items-center gap-2 mb-4">
+            <img src="/ghost.png" alt="Ghost" className="w-8 h-8" />
+            <span className="font-orbitron text-sm tracking-widest text-[#39FF14]">NOW STREAMING</span>
+          </div>
+
+          <iframe
+            style={{ borderRadius: '12px' }}
+            src="https://open.spotify.com/embed/album/0IXco9q1StJnM35hiDVlnK?utm_source=generator&theme=0&start=8"
+            width="100%"
+            height="152"
+            frameBorder="0"
+            allowFullScreen
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy"
+          />
         </div>
       </div>
 
@@ -450,7 +532,7 @@ export default function SpectreSystem() {
           {/* Center: Text */}
           <div className="flex flex-col items-center">
             <h2 className="font-orbitron text-2xl text-white tracking-widest">
-              SPECTRE<span className="text-xs align-top">®</span> — SHOP THE FUTURE
+              SPECTRE<span className="text-xs align-top">®</span> — AGAINST THE MACHINE
             </h2>
             <div className="flex gap-4 mt-2 text-[10px] text-gray-400 font-share-tech">
               <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full border border-[#39FF14]"></span> SPECTRE SYSTEM</span>
@@ -492,6 +574,108 @@ export default function SpectreSystem() {
       {/* Decorative side tech lines */}
       <div className="fixed top-1/3 left-4 w-[1px] h-32 bg-gradient-to-b from-transparent via-[#39FF14]/50 to-transparent hidden md:block"></div>
       <div className="fixed top-1/3 right-4 w-[1px] h-32 bg-gradient-to-b from-transparent via-[#39FF14]/50 to-transparent hidden md:block"></div>
+
+      {/* Chat Panel */}
+      <div className={`fixed inset-0 md:inset-auto md:bottom-0 md:right-0 z-50 transition-all duration-500 ease-out ${chatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
+        <div className="w-full h-full md:w-[400px] md:h-[500px] md:mr-6 md:mb-6 border-0 md:border border-[#39FF14] rounded-none md:rounded-2xl bg-black/95 backdrop-blur-md shadow-[0_0_30px_rgba(57,255,20,0.3)] flex flex-col overflow-hidden">
+
+          {/* Chat Header */}
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#39FF14]/40 bg-black/80">
+            <div className="flex items-center gap-3">
+              <img src="/ghost.png" alt="Ghost" className="w-10 h-auto" />
+              <div>
+                <div className="font-orbitron text-sm text-[#39FF14] tracking-wider">SPECTRE AI</div>
+                <div className="text-[10px] text-gray-400 font-share-tech flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#39FF14] rounded-full animate-pulse"></span>
+                  SYSTEM ACTIVE
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => setChatOpen(false)}
+              className="w-8 h-8 flex items-center justify-center border border-[#39FF14]/40 rounded hover:bg-[#39FF14]/10 transition-colors"
+            >
+              <span className="text-[#39FF14] text-lg">×</span>
+            </button>
+          </div>
+
+          {/* Chat Messages */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#39FF14]/30 scrollbar-track-transparent">
+            {chatMessages.map((msg, i) => (
+              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-4 py-2 rounded-xl font-share-tech text-sm ${
+                  msg.role === 'user'
+                    ? 'bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/40'
+                    : 'bg-gray-800/80 text-gray-200 border border-gray-700'
+                }`}>
+                  {msg.content}
+                </div>
+              </div>
+            ))}
+            <div ref={chatEndRef} />
+          </div>
+
+          {/* Chat Input */}
+          <div className="p-4 border-t border-[#39FF14]/40 bg-black/80">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && inputValue.trim()) {
+                    setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
+                    setInputValue('');
+                    // Placeholder response - will be replaced with actual AI
+                    setTimeout(() => {
+                      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
+                    }, 500);
+                  }
+                }}
+                placeholder="Type your message..."
+                className="flex-1 bg-black/60 border border-[#39FF14]/40 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 font-share-tech focus:outline-none focus:border-[#39FF14] focus:shadow-[0_0_10px_rgba(57,255,20,0.2)] transition-all"
+              />
+              <button
+                onClick={() => {
+                  if (inputValue.trim()) {
+                    setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
+                    setInputValue('');
+                    setTimeout(() => {
+                      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
+                    }, 500);
+                  }
+                }}
+                className="px-4 py-2 bg-[#39FF14]/20 border border-[#39FF14] rounded-lg text-[#39FF14] font-orbitron text-xs tracking-wider hover:bg-[#39FF14]/30 transition-colors"
+              >
+                SEND
+              </button>
+            </div>
+            <div className="text-[8px] text-gray-500 mt-2 font-share-tech text-center">
+              SPECTRE SYSTEM v1.0 // ENCRYPTED CONNECTION
+            </div>
+          </div>
+
+          {/* Corner decorations */}
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-2xl"></div>
+          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#39FF14] rounded-tr-2xl"></div>
+          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#39FF14] rounded-bl-2xl"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-2xl"></div>
+        </div>
+      </div>
+
+      {/* Floating corner ghost - Chat toggle button */}
+      <div
+        onClick={() => setChatOpen(!chatOpen)}
+        className={`fixed bottom-6 right-6 z-50 cursor-pointer ${chatOpen ? 'pointer-events-none' : 'hover:scale-105'}`}
+        style={{
+          opacity: chatOpen ? 0 : ghostOpacity * 0.6,
+          filter: `blur(${(1 - ghostOpacity) * 2}px)`,
+          transform: `translateY(${(1 - ghostOpacity) * 30}px) scale(${chatOpen ? 0.75 : 0.95 + ghostOpacity * 0.1})`,
+          transition: 'transform 0.3s ease-out',
+        }}
+      >
+        <img src="/ghost.png" alt="Ghost" className="w-[146px] h-auto drop-shadow-[0_0_10px_rgba(57,255,20,0.5)]" />
+      </div>
 
     </div>
   );
