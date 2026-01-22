@@ -126,7 +126,7 @@ const Barcode = () => {
 // --- Main Component ---
 
 export default function SpectreSystem() {
-  const [isHovered, setIsHovered] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -234,52 +234,105 @@ export default function SpectreSystem() {
 
       {/* --- NAVIGATION --- */}
       <div className="relative z-30 flex justify-center mt-4">
-        <div className="relative">
+        <div className="relative" onMouseLeave={() => setActiveDropdown(null)}>
           {/* Nav Container Shape */}
-          <div className="flex items-center gap-12 px-16 py-3 border-b border-[#39FF14] bg-black/80 backdrop-blur-sm relative">
+          <div className="flex items-center gap-8 px-12 py-3 border-b border-[#39FF14] bg-black/80 backdrop-blur-sm relative">
             {/* Decorative angled borders for nav */}
             <div className="absolute bottom-0 left-0 w-8 h-[1px] bg-[#39FF14] origin-left -rotate-45 translate-y-3 -translate-x-2"></div>
             <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#39FF14] origin-right rotate-45 translate-y-3 translate-x-2"></div>
 
-            {['ARTIST', 'WEBSHOP', 'INFO', 'BOOKING', 'SOCIALS'].map((item) => (
-              <div
-                key={item}
-                className={`relative group cursor-pointer font-orbitron tracking-widest text-sm ${item === 'WEBSHOP' ? 'text-[#39FF14] glow-text' : 'text-white hover:text-[#39FF14] transition-colors'}`}
-                onMouseEnter={() => item === 'WEBSHOP' && setIsHovered(true)}
-              >
-                {item}
-                {item === 'WEBSHOP' && (
-                  <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] animate-bounce">▼</div>
-                )}
-              </div>
-            ))}
+            {['ARTISTS', 'WEBSHOP', 'INFO', 'BOOKING', 'SOCIALS'].map((item) => {
+              const hasDropdown = ['ARTISTS', 'WEBSHOP', 'INFO', 'BOOKING', 'SOCIALS'].includes(item);
+              const isActive = activeDropdown === item;
+              return (
+                <div
+                  key={item}
+                  className={`relative cursor-pointer font-orbitron tracking-widest text-sm ${isActive ? 'text-[#39FF14] glow-text' : 'text-white hover:text-[#39FF14] transition-colors'}`}
+                  onMouseEnter={() => hasDropdown && setActiveDropdown(item)}
+                >
+                  {item}
+                  {hasDropdown && isActive && (
+                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[10px] animate-bounce">▼</div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
-          {/* --- DROPDOWN MENU --- */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-[500px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 grid grid-cols-3 gap-0 shadow-[0_0_15px_rgba(57,255,20,0.2)]">
-            {/* Corner accents */}
+          {/* --- ARTISTS DROPDOWN --- */}
+          <div
+            className={`absolute top-full left-0 mt-4 min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'ARTISTS' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+          >
             <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
             <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+            <div className="p-4 flex flex-col gap-2 font-share-tech">
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">ACE</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">LOUISG</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">NALDEAUX</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">SAFFARA</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">CROW</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YC</a>
+            </div>
+          </div>
 
-            {/* Column 1 */}
-            <div className="p-4 border-r border-[#39FF14]/20 flex flex-col gap-2 font-share-tech">
+          {/* --- WEBSHOP DROPDOWN --- */}
+          <div
+            className={`absolute top-full left-[90px] mt-4 min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'WEBSHOP' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+          >
+            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+            <div className="p-4 flex flex-col gap-2 font-share-tech">
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</a>
               <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</a>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Accessories</a>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Limited Drops</a>
             </div>
+          </div>
 
-            {/* Column 2 */}
-            <div className="p-4 border-r border-[#39FF14]/20 flex flex-col gap-2 font-share-tech">
-              <div className="text-[10px] text-[#39FF14]/60 mb-1">e_sinas</div>
-              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">About Spectre</a>
+          {/* --- INFO DROPDOWN --- */}
+          <div
+            className={`absolute top-full left-[200px] mt-4 min-w-[200px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'INFO' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+          >
+            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+            <div className="p-4 flex flex-col gap-2 font-share-tech">
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit</a>
+              <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Spectre</a>
+              <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Ace</a>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Contact</a>
             </div>
+          </div>
 
-            {/* Column 3 */}
+          {/* --- BOOKING DROPDOWN --- */}
+          <div
+            className={`absolute top-full left-[280px] mt-4 min-w-[320px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'BOOKING' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+          >
+            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
+            <div className="grid grid-cols-2 gap-0">
+              {/* Left Column */}
+              <div className="p-4 border-r border-[#39FF14]/20 flex flex-col gap-2 font-share-tech">
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Agenda</a>
+                <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Events</a>
+              </div>
+              {/* Right Column */}
+              <div className="p-4 flex flex-col gap-2 font-share-tech">
+                <div className="text-[10px] text-[#39FF14]/60 mb-1">e_sinas</div>
+                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Previous Gigs</a>
+              </div>
+            </div>
+          </div>
+
+          {/* --- SOCIALS DROPDOWN --- */}
+          <div
+            className={`absolute top-full right-0 mt-4 min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 z-50 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200 ${activeDropdown === 'SOCIALS' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2 pointer-events-none'}`}
+          >
+            <div className="absolute -top-1 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
             <div className="p-4 flex flex-col gap-2 font-share-tech">
-              <div className="text-[10px] text-[#39FF14]/60 mb-1">ID_IIEc</div>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Instagram</a>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">TikTok</a>
               <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Spotify</a>
