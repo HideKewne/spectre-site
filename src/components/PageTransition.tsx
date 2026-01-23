@@ -25,7 +25,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
       // Remove animation class after it completes
       const timer = setTimeout(() => {
         content.classList.remove('iris-enter');
-      }, 450);
+      }, 1250);
 
       return () => clearTimeout(timer);
     }

@@ -28,10 +28,10 @@ export default function TransitionLink({ href, children, className }: Transition
     // Set flag so next page knows to play open animation
     sessionStorage.setItem('iris-transitioning', 'true');
 
-    // Navigate after iris close animation completes (450ms > 400ms animation)
+    // Navigate after iris close animation completes (1250ms > 1200ms animation)
     setTimeout(() => {
       window.location.href = href;
-    }, 450);
+    }, 1250);
   };
 
   return (
