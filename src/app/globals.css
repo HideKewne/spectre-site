@@ -26,25 +26,20 @@ body {
   }
 }
 
-/* Iris Wipe Overlay - Zelda/Pokemon style transition */
-.iris-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: #000000;
-  z-index: 9999;
-  pointer-events: none;
-  /* Start fully transparent (circle at 150% reveals everything) */
+/* Zelda/Pokemon style iris wipe - clip the CONTENT, not an overlay */
+.page-transition {
+  /* Content fully visible by default */
   clip-path: circle(150% at 50% 50%);
 }
 
-/* Enter animation: Circle opens up from center */
-.iris-overlay.iris-enter {
-  animation: irisOpen 0.4s ease-out forwards;
+/* Exit: Content shrinks to center (revealing black background) */
+.page-transition.iris-exit {
+  animation: irisClose 0.4s ease-in forwards;
 }
 
-/* Exit animation: Circle closes to center */
-.iris-overlay.iris-exit {
-  animation: irisClose 0.4s ease-in forwards;
+/* Enter: Content expands from center */
+.page-transition.iris-enter {
+  animation: irisOpen 0.4s ease-out forwards;
 }
 
 @keyframes irisClose {
@@ -63,9 +58,4 @@ body {
   to {
     clip-path: circle(150% at 50% 50%);
   }
-}
-
-/* Page content wrapper */
-.page-transition {
-  /* Content is always visible - iris overlay handles the masking */
 }

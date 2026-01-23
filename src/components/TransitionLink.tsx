@@ -19,10 +19,10 @@ export default function TransitionLink({ href, children, className }: Transition
     if (isNavigating.current) return;
     isNavigating.current = true;
 
-    // Find the iris overlay and trigger close animation
-    const overlay = document.querySelector('.iris-overlay');
-    if (overlay) {
-      overlay.classList.add('iris-exit');
+    // Find the content wrapper and trigger close animation
+    const content = document.querySelector('.page-transition');
+    if (content) {
+      content.classList.add('iris-exit');
     }
 
     // Set flag so next page knows to play open animation

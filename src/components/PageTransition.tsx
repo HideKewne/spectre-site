@@ -7,11 +7,11 @@ interface PageTransitionProps {
 }
 
 export default function PageTransition({ children }: PageTransitionProps) {
-  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const overlay = overlayRef.current;
-    if (!overlay) return;
+    const content = contentRef.current;
+    if (!content) return;
 
     // Check if we're coming from a page exit (iris should open)
     const wasExiting = sessionStorage.getItem('iris-transitioning') === 'true';
@@ -20,11 +20,11 @@ export default function PageTransition({ children }: PageTransitionProps) {
       // Clear the flag
       sessionStorage.removeItem('iris-transitioning');
       // Start with circle closed, then open
-      overlay.classList.add('iris-enter');
+      content.classList.add('iris-enter');
 
       // Remove animation class after it completes
       const timer = setTimeout(() => {
-        overlay.classList.remove('iris-enter');
+        content.classList.remove('iris-enter');
       }, 450);
 
       return () => clearTimeout(timer);
@@ -32,14 +32,17 @@ export default function PageTransition({ children }: PageTransitionProps) {
 
     // Handle pageshow for bfcache
     const handlePageShow = () => {
-      overlay.classList.remove('iris-exit');
-      overlay.classList.remove('iris-enter');
+      content.classList.remove('iris-exit');
+      content.classList.remove('iris-enter');
+      // Reset to fully visible
+      content.style.clipPath = 'circle(150% at 50% 50%)';
     };
 
     // Handle visibility change
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
-        overlay.classList.remove('iris-exit');
+        content.classList.remove('iris-exit');
+        content.style.clipPath = 'circle(150% at 50% 50%)';
       }
     };
 
@@ -53,11 +56,8 @@ export default function PageTransition({ children }: PageTransitionProps) {
   }, []);
 
   return (
-    <>
-      <div ref={overlayRef} className="iris-overlay" />
-      <div className="page-transition">
-        {children}
-      </div>
-    </>
+    <div ref={contentRef} className="page-transition">
+      {children}
+    </div>
   );
 }
