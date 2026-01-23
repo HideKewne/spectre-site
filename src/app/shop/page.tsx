@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import TransitionLink from '@/components/TransitionLink'
 
 export default function ShopPage() {
     return (
@@ -19,7 +20,7 @@ export default function ShopPage() {
                 </div>
 
                 <div className="hidden md:flex items-center gap-16 text-[11px] tracking-[0.4em] font-medium text-white/50">
-                    <Link href="/" className="hover:text-white transition-colors uppercase">Home</Link>
+                    <TransitionLink href="/" className="hover:text-white transition-colors uppercase">Home</TransitionLink>
                     <Link href="/shop" className="text-white relative uppercase">
                         Shop
                         <div className="absolute -bottom-2 left-0 w-full h-[1px] bg-white"></div>
