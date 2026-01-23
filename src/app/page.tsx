@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import TransitionLink from '@/components/TransitionLink';
 
 // --- Icons & SVG Components ---
 
@@ -129,12 +130,45 @@ export default function SpectreSystem() {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
-  const [chatMessages, setChatMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([
-    { role: 'assistant', content: 'SYSTEM ONLINE. How can I assist you today?' }
-  ]);
+  const [chatPhase, setChatPhase] = useState(0); // 0=closed, 1=input, 2=expanding, 3=open, 4=closing
+  const [chatMessages, setChatMessages] = useState<{role: 'user' | 'assistant', content: string}[]>([]);
+  const [typedMessage, setTypedMessage] = useState('');
   const [inputValue, setInputValue] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [ghostOpacity, setGhostOpacity] = useState(1);
+  const systemMessage = 'SYSTEM ONLINE. How can I assist you today?';
+
+  // Open chat with staged animation
+  const openChat = () => {
+    setChatOpen(true);
+    setChatPhase(1); // Input bar appears first
+    setTimeout(() => setChatPhase(2), 400); // Expand upward
+    setTimeout(() => setChatPhase(3), 900); // Header reveals, fully open
+  };
+
+  // Close chat - simple smooth close
+  const closeChat = () => {
+    setChatPhase(4); // Trigger close animation
+    setTimeout(() => {
+      setChatPhase(0);
+      setChatOpen(false);
+      setTypedMessage('');
+      setChatMessages([]);
+    }, 500);
+  };
+
+  // Typewriter effect for system message
+  useEffect(() => {
+    if (chatPhase === 3 && typedMessage.length < systemMessage.length) {
+      const timeout = setTimeout(() => {
+        setTypedMessage(systemMessage.slice(0, typedMessage.length + 1));
+      }, 30);
+      return () => clearTimeout(timeout);
+    }
+    if (chatPhase === 3 && typedMessage.length === systemMessage.length && chatMessages.length === 0) {
+      setChatMessages([{ role: 'assistant', content: systemMessage }]);
+    }
+  }, [chatPhase, typedMessage, chatMessages.length]);
 
   useEffect(() => {
     setMounted(true);
@@ -254,6 +288,53 @@ export default function SpectreSystem() {
         .scrollbar-hide::-webkit-scrollbar {
           display: none;
         }
+
+        /* Chat animation keyframes */
+        @keyframes chatSlideUp {
+          from {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @keyframes chatSlideDown {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(100%);
+            opacity: 0;
+          }
+        }
+        @keyframes borderGlow {
+          0% { box-shadow: 0 0 0px rgba(57,255,20,0); }
+          50% { box-shadow: 0 0 25px rgba(57,255,20,0.8); }
+          100% { box-shadow: 0 0 30px rgba(57,255,20,0.3); }
+        }
+        @keyframes headerReveal {
+          from { opacity: 0; transform: translateY(-15px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes cornerFadeIn {
+          from { opacity: 0; transform: scale(0.5); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        .chat-phase-1 {
+          animation: chatSlideUp 0.35s ease-out forwards, borderGlow 0.5s ease-out forwards;
+        }
+        .chat-phase-4 {
+          animation: chatSlideDown 0.4s ease-in forwards;
+        }
+        .chat-header-enter {
+          animation: headerReveal 0.25s ease-out forwards;
+        }
+        .chat-corner-enter {
+          animation: cornerFadeIn 0.3s ease-out forwards;
+        }
       `}</style>
 
       {/* Scanline Overlay */}
@@ -353,11 +434,11 @@ export default function SpectreSystem() {
               <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
               <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
               <div className="p-4 flex flex-col gap-2 font-share-tech">
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit</a>
+                <TransitionLink href="/press-kit" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit</TransitionLink>
                 <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Spectre</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Ace</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Contact</a>
+                <TransitionLink href="/press-kit" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Spectre</TransitionLink>
+                <TransitionLink href="/press-kit" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Press Kit Ace</TransitionLink>
+                <TransitionLink href="/contact" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Contact</TransitionLink>
               </div>
             </div>
           </div>
@@ -476,7 +557,7 @@ export default function SpectreSystem() {
           </div>
 
           {/* Card 3 */}
-          <div className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
+          <TransitionLink href="/contact" className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
             <div className="absolute inset-0 bg-[#39FF14]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="corner-border top-0 left-0 border-t-2 border-l-2 rounded-tl-xl"></div>
             <div className="corner-border bottom-0 right-0 border-b-2 border-r-2 rounded-br-xl"></div>
@@ -488,7 +569,7 @@ export default function SpectreSystem() {
               <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">CONTACT</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Get In Touch</p>
             </div>
-          </div>
+          </TransitionLink>
 
         </div>
       </div>
@@ -575,97 +656,127 @@ export default function SpectreSystem() {
       <div className="fixed top-1/3 left-4 w-[1px] h-32 bg-gradient-to-b from-transparent via-[#39FF14]/50 to-transparent hidden md:block"></div>
       <div className="fixed top-1/3 right-4 w-[1px] h-32 bg-gradient-to-b from-transparent via-[#39FF14]/50 to-transparent hidden md:block"></div>
 
-      {/* Chat Panel */}
-      <div className={`fixed inset-0 md:inset-auto md:bottom-0 md:right-0 z-50 transition-all duration-500 ease-out ${chatOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-full pointer-events-none'}`}>
-        <div className="w-full h-full md:w-[400px] md:h-[500px] md:mr-6 md:mb-6 border-0 md:border border-[#39FF14] rounded-none md:rounded-2xl bg-black/95 backdrop-blur-md shadow-[0_0_30px_rgba(57,255,20,0.3)] flex flex-col overflow-hidden">
+      {/* Chat Panel - Staged Animation */}
+      {chatOpen && (
+        <div className="fixed inset-0 md:inset-auto md:bottom-6 md:right-6 z-50 flex items-end justify-end">
+          <div
+            className={`
+              w-full md:w-[400px]
+              border-0 md:border border-[#39FF14] rounded-none md:rounded-2xl
+              bg-black/95 backdrop-blur-md flex flex-col overflow-hidden relative
+              transition-[height] duration-500 ease-out
+              ${chatPhase === 1 ? 'chat-phase-1' : ''}
+              ${chatPhase === 4 ? 'chat-phase-4' : ''}
+            `}
+            style={{
+              height: chatPhase === 1 ? '120px' : chatPhase >= 2 ? '500px' : '120px',
+              boxShadow: '0 0 30px rgba(57,255,20,0.3)',
+            }}
+          >
 
-          {/* Chat Header */}
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[#39FF14]/40 bg-black/80">
-            <div className="flex items-center gap-3">
-              <img src="/ghost.png" alt="Ghost" className="w-10 h-auto" />
-              <div>
-                <div className="font-orbitron text-sm text-[#39FF14] tracking-wider">SPECTRE AI</div>
-                <div className="text-[10px] text-gray-400 font-share-tech flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#39FF14] rounded-full animate-pulse"></span>
-                  SYSTEM ACTIVE
+            {/* Chat Header - reveals in phase 3 */}
+            {chatPhase >= 3 && chatPhase !== 4 && (
+              <div className="flex items-center justify-between px-4 py-3 border-b border-[#39FF14]/40 bg-black/80 chat-header-enter">
+                <div className="flex items-center gap-3">
+                  <img src="/ghost.png" alt="Ghost" className="w-10 h-auto" />
+                  <div>
+                    <div className="font-orbitron text-sm text-[#39FF14] tracking-wider">SPECTRE AI</div>
+                    <div className="text-[10px] text-gray-400 font-share-tech flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-[#39FF14] rounded-full animate-pulse"></span>
+                      SYSTEM ACTIVE
+                    </div>
+                  </div>
                 </div>
+                <button
+                  onClick={closeChat}
+                  className="w-8 h-8 flex items-center justify-center border border-[#39FF14]/40 rounded hover:bg-[#39FF14]/10 transition-colors"
+                >
+                  <span className="text-[#39FF14] text-lg">×</span>
+                </button>
+              </div>
+            )}
+
+            {/* Chat Messages - reveals in phase 2+ */}
+            {chatPhase >= 2 && chatPhase !== 4 && (
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#39FF14]/30 scrollbar-track-transparent">
+                {/* Typewriter message during animation */}
+                {chatPhase === 3 && typedMessage && chatMessages.length === 0 && (
+                  <div className="flex justify-start">
+                    <div className="max-w-[80%] px-4 py-2 rounded-xl font-share-tech text-sm bg-gray-800/80 text-gray-200 border border-gray-700">
+                      {typedMessage}
+                      <span className="animate-pulse">_</span>
+                    </div>
+                  </div>
+                )}
+                {/* Regular messages after typewriter completes */}
+                {chatMessages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-[80%] px-4 py-2 rounded-xl font-share-tech text-sm ${
+                      msg.role === 'user'
+                        ? 'bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/40'
+                        : 'bg-gray-800/80 text-gray-200 border border-gray-700'
+                    }`}>
+                      {msg.content}
+                    </div>
+                  </div>
+                ))}
+                <div ref={chatEndRef} />
+              </div>
+            )}
+
+            {/* Chat Input - always visible when chat is open */}
+            <div className="p-4 border-t border-[#39FF14]/40 bg-black/80 mt-auto">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && inputValue.trim() && chatPhase === 3) {
+                      setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
+                      setInputValue('');
+                      setTimeout(() => {
+                        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
+                      }, 500);
+                    }
+                  }}
+                  placeholder="Type your message..."
+                  className="flex-1 bg-black/60 border border-[#39FF14]/40 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 font-share-tech focus:outline-none focus:border-[#39FF14] focus:shadow-[0_0_10px_rgba(57,255,20,0.2)] transition-all"
+                  disabled={chatPhase !== 3}
+                />
+                <button
+                  onClick={() => {
+                    if (inputValue.trim() && chatPhase === 3) {
+                      setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
+                      setInputValue('');
+                      setTimeout(() => {
+                        setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
+                      }, 500);
+                    }
+                  }}
+                  className="px-4 py-2 bg-[#39FF14]/20 border border-[#39FF14] rounded-lg text-[#39FF14] font-orbitron text-xs tracking-wider hover:bg-[#39FF14]/30 transition-colors"
+                  disabled={chatPhase !== 3}
+                >
+                  SEND
+                </button>
+              </div>
+              <div className="text-[8px] text-gray-500 mt-2 font-share-tech text-center">
+                SPECTRE SYSTEM v1.0 // ENCRYPTED CONNECTION
               </div>
             </div>
-            <button
-              onClick={() => setChatOpen(false)}
-              className="w-8 h-8 flex items-center justify-center border border-[#39FF14]/40 rounded hover:bg-[#39FF14]/10 transition-colors"
-            >
-              <span className="text-[#39FF14] text-lg">×</span>
-            </button>
-          </div>
 
-          {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-[#39FF14]/30 scrollbar-track-transparent">
-            {chatMessages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] px-4 py-2 rounded-xl font-share-tech text-sm ${
-                  msg.role === 'user'
-                    ? 'bg-[#39FF14]/20 text-[#39FF14] border border-[#39FF14]/40'
-                    : 'bg-gray-800/80 text-gray-200 border border-gray-700'
-                }`}>
-                  {msg.content}
-                </div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
+            {/* Corner decorations */}
+            <div className={`absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-2xl transition-opacity duration-300 ${chatPhase >= 2 && chatPhase !== 4 ? 'opacity-100' : 'opacity-0'}`}></div>
+            <div className={`absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#39FF14] rounded-tr-2xl transition-opacity duration-300 ${chatPhase >= 2 && chatPhase !== 4 ? 'opacity-100' : 'opacity-0'}`}></div>
+            <div className={`absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#39FF14] rounded-bl-2xl ${chatPhase >= 1 ? 'chat-corner-enter' : 'opacity-0'}`}></div>
+            <div className={`absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-2xl ${chatPhase >= 1 ? 'chat-corner-enter' : 'opacity-0'}`}></div>
           </div>
-
-          {/* Chat Input */}
-          <div className="p-4 border-t border-[#39FF14]/40 bg-black/80">
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && inputValue.trim()) {
-                    setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
-                    setInputValue('');
-                    // Placeholder response - will be replaced with actual AI
-                    setTimeout(() => {
-                      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
-                    }, 500);
-                  }
-                }}
-                placeholder="Type your message..."
-                className="flex-1 bg-black/60 border border-[#39FF14]/40 rounded-lg px-4 py-2 text-sm text-white placeholder-gray-500 font-share-tech focus:outline-none focus:border-[#39FF14] focus:shadow-[0_0_10px_rgba(57,255,20,0.2)] transition-all"
-              />
-              <button
-                onClick={() => {
-                  if (inputValue.trim()) {
-                    setChatMessages(prev => [...prev, { role: 'user', content: inputValue }]);
-                    setInputValue('');
-                    setTimeout(() => {
-                      setChatMessages(prev => [...prev, { role: 'assistant', content: 'Processing request... [AI backend not connected]' }]);
-                    }, 500);
-                  }
-                }}
-                className="px-4 py-2 bg-[#39FF14]/20 border border-[#39FF14] rounded-lg text-[#39FF14] font-orbitron text-xs tracking-wider hover:bg-[#39FF14]/30 transition-colors"
-              >
-                SEND
-              </button>
-            </div>
-            <div className="text-[8px] text-gray-500 mt-2 font-share-tech text-center">
-              SPECTRE SYSTEM v1.0 // ENCRYPTED CONNECTION
-            </div>
-          </div>
-
-          {/* Corner decorations */}
-          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-2xl"></div>
-          <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-[#39FF14] rounded-tr-2xl"></div>
-          <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#39FF14] rounded-bl-2xl"></div>
-          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-2xl"></div>
         </div>
-      </div>
+      )}
 
       {/* Floating corner ghost - Chat toggle button */}
       <div
-        onClick={() => setChatOpen(!chatOpen)}
+        onClick={() => !chatOpen && openChat()}
         className={`fixed bottom-6 right-6 z-50 cursor-pointer ${chatOpen ? 'pointer-events-none' : 'hover:scale-105'}`}
         style={{
           opacity: chatOpen ? 0 : ghostOpacity * 0.6,
