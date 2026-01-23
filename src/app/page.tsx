@@ -417,7 +417,7 @@ export default function SpectreSystem() {
               <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
               <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
               <div className="p-4 flex flex-col gap-2 font-share-tech">
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</a>
+                <TransitionLink href="/shop" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</TransitionLink>
                 <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</a>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Accessories</a>
@@ -527,7 +527,7 @@ export default function SpectreSystem() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
           {/* Card 1 */}
-          <div className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
+          <TransitionLink href="/shop" className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
             <div className="absolute inset-0 bg-[#39FF14]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="corner-border top-0 left-0 border-t-2 border-l-2 rounded-tl-xl"></div>
             <div className="corner-border bottom-0 right-0 border-b-2 border-r-2 rounded-br-xl"></div>
@@ -539,7 +539,7 @@ export default function SpectreSystem() {
               <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">WEBSHOP</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Futuristic Fashion</p>
             </div>
-          </div>
+          </TransitionLink>
 
           {/* Card 2 */}
           <div className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
