@@ -1,25 +1,45 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface PageTransitionProps {
   children: React.ReactNode;
 }
 
 export default function PageTransition({ children }: PageTransitionProps) {
-  useEffect(() => {
-    // Always remove on mount
-    document.body.classList.remove('page-exit');
+  const overlayRef = useRef<HTMLDivElement>(null);
 
-    // Handle ALL pageshow events, not just persisted (bfcache)
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
+
+    // Check if we're coming from a page exit (iris should open)
+    const wasExiting = sessionStorage.getItem('iris-transitioning') === 'true';
+
+    if (wasExiting) {
+      // Clear the flag
+      sessionStorage.removeItem('iris-transitioning');
+      // Start with circle closed, then open
+      overlay.classList.add('iris-enter');
+
+      // Remove animation class after it completes
+      const timer = setTimeout(() => {
+        overlay.classList.remove('iris-enter');
+      }, 450);
+
+      return () => clearTimeout(timer);
+    }
+
+    // Handle pageshow for bfcache
     const handlePageShow = () => {
-      document.body.classList.remove('page-exit');
+      overlay.classList.remove('iris-exit');
+      overlay.classList.remove('iris-enter');
     };
 
-    // Additional safety: handle visibility change (tab switching)
+    // Handle visibility change
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
-        document.body.classList.remove('page-exit');
+        overlay.classList.remove('iris-exit');
       }
     };
 
@@ -33,8 +53,11 @@ export default function PageTransition({ children }: PageTransitionProps) {
   }, []);
 
   return (
-    <div className="page-transition">
-      {children}
-    </div>
+    <>
+      <div ref={overlayRef} className="iris-overlay" />
+      <div className="page-transition">
+        {children}
+      </div>
+    </>
   );
 }

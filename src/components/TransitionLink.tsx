@@ -19,13 +19,19 @@ export default function TransitionLink({ href, children, className }: Transition
     if (isNavigating.current) return;
     isNavigating.current = true;
 
-    // Trigger page fade-out animation
-    document.body.classList.add('page-exit');
+    // Find the iris overlay and trigger close animation
+    const overlay = document.querySelector('.iris-overlay');
+    if (overlay) {
+      overlay.classList.add('iris-exit');
+    }
 
-    // Navigate after animation completes (200ms > 150ms animation duration)
+    // Set flag so next page knows to play open animation
+    sessionStorage.setItem('iris-transitioning', 'true');
+
+    // Navigate after iris close animation completes (450ms > 400ms animation)
     setTimeout(() => {
       window.location.href = href;
-    }, 200);
+    }, 450);
   };
 
   return (

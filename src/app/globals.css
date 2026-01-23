@@ -26,37 +26,46 @@ body {
   }
 }
 
-/* Page Transition Animations */
-.page-transition {
-  /* No animation on enter - content is always visible */
-}
-
-body.page-exit .page-transition {
-  animation: pageExit 0.15s ease-in forwards;
-}
-
-@keyframes pageExit {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-/* Subtle neon glow effect during page exit */
-body.page-exit::after {
-  content: '';
+/* Iris Wipe Overlay - Zelda/Pokemon style transition */
+.iris-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at center, rgba(57,255,20,0.1) 0%, transparent 70%);
-  pointer-events: none;
-  animation: glowPulse 0.15s ease-out;
+  background-color: #000000;
   z-index: 9999;
+  pointer-events: none;
+  /* Start fully transparent (circle at 150% reveals everything) */
+  clip-path: circle(150% at 50% 50%);
 }
 
-@keyframes glowPulse {
-  0% { opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0; }
+/* Enter animation: Circle opens up from center */
+.iris-overlay.iris-enter {
+  animation: irisOpen 0.4s ease-out forwards;
+}
+
+/* Exit animation: Circle closes to center */
+.iris-overlay.iris-exit {
+  animation: irisClose 0.4s ease-in forwards;
+}
+
+@keyframes irisClose {
+  from {
+    clip-path: circle(150% at 50% 50%);
+  }
+  to {
+    clip-path: circle(0% at 50% 50%);
+  }
+}
+
+@keyframes irisOpen {
+  from {
+    clip-path: circle(0% at 50% 50%);
+  }
+  to {
+    clip-path: circle(150% at 50% 50%);
+  }
+}
+
+/* Page content wrapper */
+.page-transition {
+  /* Content is always visible - iris overlay handles the masking */
 }
