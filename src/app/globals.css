@@ -28,8 +28,9 @@ body {
 
 /* Zelda/Pokemon style iris wipe - clip the CONTENT, not an overlay */
 .page-transition {
-  /* Content fully visible by default */
-  clip-path: circle(150% at 50% 50%);
+  min-height: 100vh;
+  background-color: #000000;
+  /* Content fully visible by default - NO clip-path initially */
 }
 
 /* Exit: Content shrinks to center (revealing black background) */
