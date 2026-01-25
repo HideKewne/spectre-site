@@ -42,11 +42,13 @@ const ProductCard = ({
   price,
   placeholderText,
   cornerText,
+  imageSrc,
 }: {
   name: string;
   price: string;
   placeholderText: string;
   cornerText: string;
+  imageSrc: string;
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -54,14 +56,17 @@ const ProductCard = ({
     <div className="flex flex-col">
       {/* Card */}
       <div
-        className="relative bg-[#1A1A1A] rounded-xl aspect-square flex items-center justify-center overflow-hidden"
+        className="relative bg-[#2A2A2A] rounded-xl aspect-square flex items-center justify-center overflow-hidden"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Placeholder for product image */}
-        <div className="w-3/4 h-3/4 bg-[#2A2A2A] rounded-lg flex items-center justify-center">
-          <span className="text-gray-500 text-xs">Product Image</span>
-        </div>
+        {/* Product image */}
+        <Image
+          src={imageSrc}
+          alt={name}
+          fill
+          className="object-cover"
+        />
 
         {/* Circle indicator - bottom left */}
         <div
@@ -77,12 +82,12 @@ const ProductCard = ({
       </div>
 
       {/* Product info below card */}
-      <div className="mt-4 flex justify-between items-start">
-        <div>
+      <div className="mt-4 relative">
+        <div className="flex flex-col items-center">
           <h3 className="text-white font-medium text-lg">{name}</h3>
           <p className="text-gray-400 text-sm">{price}</p>
         </div>
-        <span className="text-[10px] text-gray-500 font-mono mt-1">{placeholderText}</span>
+        <span className="absolute right-0 top-0 text-[10px] text-gray-500 font-mono mt-11">{placeholderText}</span>
       </div>
     </div>
   );
@@ -196,10 +201,16 @@ export default function OnlineStorePage() {
 
               {/* Hoodie Image */}
               <div className="relative w-[350px] h-[400px] flex items-center justify-center">
-                {/* Placeholder for hoodie */}
-                <div className="w-full h-full bg-[#1A1A1A] rounded-lg flex items-center justify-center">
-                  <span className="text-gray-500">Hoodie Image</span>
-                </div>
+                <Image
+                  src="/shop/hero_hoodie.png"
+                  alt="Spectre Hoodie"
+                  fill
+                  className="object-contain"
+                  style={{
+                    maskImage: 'radial-gradient(ellipse at center, black 50%, transparent 100%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at center, black 50%, transparent 100%)'
+                  }}
+                />
               </div>
 
               {/* Bottom text */}
@@ -225,18 +236,21 @@ export default function OnlineStorePage() {
               price="$120"
               placeholderText="9.RRO:MDRLOD86E"
               cornerText="2.BONO MIBBONYA"
+              imageSrc="/shop/hero_hoodie.png"
             />
             <ProductCard
               name="Future Tech Tee"
               price="$65"
               placeholderText="3.GFRAF BAHCOFVT"
               cornerText="4.XENO DIGITALIS"
+              imageSrc="/shop/future_tech_tee.png"
             />
             <ProductCard
-              name="Digital Camor"
+              name="Digital Camo"
               price="$80"
               placeholderText="RPTO1 SBAL ROSER"
               cornerText="DHOFNI. VANOSART"
+              imageSrc="/shop/digital_armor_pants.png"
             />
           </div>
         </div>
