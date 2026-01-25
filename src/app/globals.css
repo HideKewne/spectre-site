@@ -12,9 +12,7 @@
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  /* Spooky green fog background - revealed during iris wipe */
+  overflow-x: auto;
   background:
     radial-gradient(ellipse at 30% 20%, rgba(57, 255, 20, 0.15) 0%, transparent 50%),
     radial-gradient(ellipse at 70% 80%, rgba(57, 255, 20, 0.12) 0%, transparent 45%),
@@ -36,26 +34,18 @@ body {
 /* Zelda/Pokemon style iris wipe - clip the CONTENT, not an overlay */
 .page-transition {
   min-height: 100vh;
-  /* Solid black background - when clipped, reveals green fog on body */
-  background-color: #000000;
-  /* Hint to browser that clip-path will be animated */
-  will-change: clip-path;
+  background: #000000;
+  /* Content fully visible by default - NO clip-path initially */
 }
 
-/* Exit: Content shrinks to center (revealing green fog background) */
+/* Exit: Content shrinks to center (revealing black background) */
 .page-transition.iris-exit {
-  animation: irisClose 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
-}
-
-/* When entering from transition, start with content hidden (before React hydrates) */
-html.iris-entering .page-transition {
-  clip-path: circle(0% at 50vw 50vh);
-  visibility: hidden;
+  animation: irisClose 0.6s ease-in forwards;
 }
 
 /* Enter: Content expands from center */
 .page-transition.iris-enter {
-  animation: irisOpen 1.2s cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation: irisOpen 0.6s ease-out forwards;
 }
 
 @keyframes irisClose {
@@ -74,4 +64,17 @@ html.iris-entering .page-transition {
   to {
     clip-path: circle(150% at 50% 50%);
   }
+}
+
+/* Neon glow effect for SHOP NOW button */
+.neon-glow {
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.4),
+              0 0 20px rgba(0, 255, 0, 0.2),
+              0 0 30px rgba(0, 255, 0, 0.1);
+}
+
+/* Vertical text rotation */
+.vertical-text-up {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
 }

@@ -34,7 +34,7 @@ export default function TransitionLink({ href, children, className }: Transition
           { clipPath: `circle(0% at ${centerX}px ${centerY}px)` }
         ],
         {
-          duration: 1200,
+          duration: 600,
           easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
           fill: 'forwards'
         }
@@ -47,7 +47,7 @@ export default function TransitionLink({ href, children, className }: Transition
     // Navigate after iris close animation completes
     setTimeout(() => {
       window.location.href = href;
-    }, 1250);
+    }, 650);
   };
 
   return (

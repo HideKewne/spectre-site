@@ -57,7 +57,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
           { clipPath: `circle(150% at ${centerX}px ${centerY}px)` }
         ],
         {
-          duration: 1200,
+          duration: 600,
           easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
           fill: 'forwards'
         }
@@ -67,7 +67,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
       timer = setTimeout(() => {
         animation.cancel();
         resetTransitionState(content);
-      }, 1250);
+      }, 650);
     }
 
     return () => {

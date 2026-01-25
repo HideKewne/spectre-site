@@ -419,7 +419,7 @@ export default function SpectreSystem() {
               <div className="p-4 flex flex-col gap-2 font-share-tech">
                 <TransitionLink href="/shop" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Fashion</TransitionLink>
                 <div className="h-[1px] w-full bg-[#39FF14]/20 my-1"></div>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</a>
+                <TransitionLink href="/OnlineStore" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Vinyl</TransitionLink>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Accessories</a>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Limited Drops</a>
               </div>
