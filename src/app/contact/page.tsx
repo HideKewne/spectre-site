@@ -80,7 +80,7 @@ const WireframeGlobe = () => (
 
 // Contact info - replace with actual values
 const CONTACT_INFO = {
-  email: 'info@spectresoundsz.com',
+  email: 'info@spectreuniverse.com',
   phone: '+31 6 12345678',
   whatsapp: '+31612345678',
   instagram: 'spectresoundsz',

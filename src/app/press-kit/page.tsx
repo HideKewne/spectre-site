@@ -305,10 +305,10 @@ export default function PressKitPage() {
             For press inquiries, interviews, and media requests:
           </p>
           <a
-            href="mailto:press@spectresoundsz.com"
+            href="mailto:press@spectreuniverse.com"
             className="inline-block px-6 py-3 bg-[#39FF14]/20 border border-[#39FF14] rounded-lg text-[#39FF14] font-orbitron tracking-wider hover:bg-[#39FF14]/30 hover:shadow-[0_0_20px_rgba(57,255,20,0.3)] transition-all"
           >
-            press@spectresoundsz.com
+            press@spectreuniverse.com
           </a>
         </div>
       </div>
