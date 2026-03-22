@@ -66,6 +66,11 @@ body {
   }
 }
 
+/* Neon green text glow */
+.glow-text {
+  text-shadow: 0 0 10px rgba(57, 255, 20, 0.7);
+}
+
 /* Neon glow effect for SHOP NOW button */
 .neon-glow {
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.4),
