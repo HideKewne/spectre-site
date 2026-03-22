@@ -103,7 +103,7 @@ export default function SocialsPage() {
       <div className="relative z-10 text-center pt-8 pb-12">
         <div className="flex items-center justify-center gap-4 mb-4">
           <div className="h-[1px] w-16 bg-gradient-to-r from-transparent to-[#39FF14]"></div>
-          <h1 className="font-orbitron text-4xl md:text-5xl text-white tracking-[0.2em] glow-text">
+          <h1 className="font-orbitron text-4xl md:text-5xl text-[#39FF14] tracking-[0.2em] glow-text">
             THE CREW
           </h1>
           <div className="h-[1px] w-16 bg-gradient-to-l from-transparent to-[#39FF14]"></div>
