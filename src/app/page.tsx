@@ -596,6 +596,69 @@ export default function SpectreSystem() {
         </div>
       </div>
 
+      {/* --- PARTNERS CAROUSEL --- */}
+      <div className="relative z-20 max-w-4xl mx-auto px-4 mb-20">
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-[1px] bg-gradient-to-r from-transparent to-[#39FF14]/50"></div>
+          <h2 className="font-orbitron text-sm text-[#39FF14] tracking-[0.3em]">PARTNERS</h2>
+          <div className="flex-1 h-[1px] bg-gradient-to-l from-transparent to-[#39FF14]/50"></div>
+        </div>
+
+        {/* Carousel Container */}
+        <div className="relative border border-[#39FF14]/30 rounded-xl bg-black/50 backdrop-blur-sm py-8 overflow-hidden">
+          {/* Corner decorations */}
+          <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-xl"></div>
+          <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-xl"></div>
+
+          {/* Edge fades */}
+          <div className="absolute top-0 bottom-0 left-0 w-20 bg-gradient-to-r from-black/90 to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute top-0 bottom-0 right-0 w-20 bg-gradient-to-l from-black/90 to-transparent z-10 pointer-events-none"></div>
+
+          {/* Scrolling track */}
+          <div className="flex gap-16 animate-partner-scroll w-max">
+            {[...Array(2)].map((_, setIndex) => (
+              <div key={setIndex} className="flex gap-16">
+                {[
+                  { name: 'PARTNER ONE', icon: 'globe' },
+                  { name: 'BRAND X', icon: 'star' },
+                  { name: 'STUDIO Z', icon: 'grid' },
+                  { name: 'NEXUS', icon: 'layers' },
+                  { name: 'ECHO LABS', icon: 'sun' },
+                  { name: 'VOID', icon: 'infinity' },
+                ].map((partner) => (
+                  <div key={`${setIndex}-${partner.name}`} className="flex items-center gap-3 flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity">
+                    <div className="w-10 h-10 border border-[#39FF14]/30 rounded-lg bg-[#39FF14]/5 flex items-center justify-center">
+                      {partner.icon === 'globe' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg>
+                      )}
+                      {partner.icon === 'star' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                      )}
+                      {partner.icon === 'grid' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg>
+                      )}
+                      {partner.icon === 'layers' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                      )}
+                      {partner.icon === 'sun' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>
+                      )}
+                      {partner.icon === 'infinity' && (
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12"/></svg>
+                      )}
+                    </div>
+                    <span className="font-orbitron text-[13px] tracking-[0.1em] text-gray-400">{partner.name}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <p className="text-center mt-4 text-[10px] text-[#39FF14]/40 tracking-[0.4em] font-share-tech">AFFILIATED NETWORKS</p>
+      </div>
+
       {/* --- FOOTER BANNER --- */}
       <div className="relative z-20 max-w-5xl mx-auto px-4 mb-12">
         <div className="relative border border-[#39FF14] rounded-full h-24 flex items-center justify-between px-8 bg-black/80 shadow-[0_0_20px_rgba(57,255,20,0.1)] overflow-hidden">

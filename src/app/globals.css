@@ -3,6 +3,13 @@
 @tailwind utilities;
 
 @import url('https://fonts.googleapis.com/css2?family=Metal+Mania&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&display=swap');
+@font-face {
+  font-family: 'Akira Expanded';
+  font-style: normal;
+  font-weight: 800;
+  src: url('/fonts/akira-expanded.woff') format('woff');
+  font-display: swap;
+}
 
 * {
   box-sizing: border-box;
@@ -76,6 +83,15 @@ body {
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.4),
               0 0 20px rgba(0, 255, 0, 0.2),
               0 0 30px rgba(0, 255, 0, 0.1);
+}
+
+/* Partners carousel scroll */
+@keyframes partnerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-partner-scroll {
+  animation: partnerScroll 20s linear infinite;
 }
 
 /* Vertical text rotation */
