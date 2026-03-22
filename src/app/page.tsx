@@ -374,8 +374,21 @@ export default function SpectreSystem() {
             <div className="absolute bottom-0 right-0 w-8 h-[1px] bg-[#39FF14] origin-right rotate-45 translate-y-3 translate-x-2"></div>
 
             {['ARTISTS', 'WEBSHOP', 'INFO', 'BOOKING', 'SOCIALS'].map((item) => {
-              const hasDropdown = ['ARTISTS', 'WEBSHOP', 'INFO', 'BOOKING', 'SOCIALS'].includes(item);
+              const hasDropdown = ['ARTISTS', 'WEBSHOP', 'INFO', 'BOOKING'].includes(item);
               const isActive = activeDropdown === item;
+
+              if (item === 'SOCIALS') {
+                return (
+                  <TransitionLink
+                    key={item}
+                    href="/socials"
+                    className="relative cursor-pointer font-orbitron tracking-widest text-sm whitespace-nowrap flex-shrink-0 text-white hover:text-[#39FF14] transition-colors"
+                  >
+                    {item}
+                  </TransitionLink>
+                );
+              }
+
               return (
                 <div
                   key={item}
@@ -402,7 +415,7 @@ export default function SpectreSystem() {
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">ACE</a>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">LOUISG</a>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">NALDEAUX</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">SAFFARA</a>
+
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">CROW</a>
                 <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YC</a>
               </div>
@@ -466,21 +479,6 @@ export default function SpectreSystem() {
             </div>
           </div>
 
-          {/* --- SOCIALS DROPDOWN --- */}
-          <div
-            className={`absolute top-full right-0 pt-4 z-50 ${activeDropdown === 'SOCIALS' ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
-          >
-            <div className="min-w-[180px] border border-[#39FF14]/50 bg-black/90 backdrop-blur-md p-1 shadow-[0_0_15px_rgba(57,255,20,0.2)] transition-all duration-200">
-              <div className="absolute top-4 -left-1 w-3 h-3 border-t border-l border-[#39FF14]"></div>
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 border-b border-r border-[#39FF14]"></div>
-              <div className="p-4 flex flex-col gap-2 font-share-tech">
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Instagram</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">TikTok</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">Spotify</a>
-                <a href="#" className="hover:bg-[#39FF14] hover:text-black px-1 transition-colors block">YouTube</a>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
