@@ -83,7 +83,7 @@ const CONTACT_INFO = {
   email: 'info@spectreuniverse.com',
   phone: '+31 6 12345678',
   whatsapp: '+31612345678',
-  instagram: 'spectresoundsz',
+  instagram: 'Spectrecollectiv',
 };
 
 export default function ContactPage() {

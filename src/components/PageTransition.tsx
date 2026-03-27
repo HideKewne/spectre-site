@@ -80,6 +80,14 @@ export default function PageTransition({ children }: PageTransitionProps) {
     const content = contentRef.current;
     if (!content) return;
 
+    // SAFETY NET: if clip-path is stuck at 0% after 1.5s, force visible
+    const safetyTimer = setTimeout(() => {
+      const clip = getComputedStyle(content).clipPath;
+      if (clip && clip.includes('0%')) {
+        resetTransitionState(content);
+      }
+    }, 1500);
+
     // Handle bfcache restoration
     const handlePageShow = (e: PageTransitionEvent) => {
       // If page was restored from bfcache, always reset
@@ -105,6 +113,7 @@ export default function PageTransition({ children }: PageTransitionProps) {
     document.addEventListener('visibilitychange', handleVisibility);
 
     return () => {
+      clearTimeout(safetyTimer);
       window.removeEventListener('pageshow', handlePageShow);
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('visibilitychange', handleVisibility);

@@ -128,7 +128,14 @@ export default function ShopPage() {
               WEAR
               <span className="absolute -bottom-[18px] left-1/2 -translate-x-1/2 w-16 h-[3px] bg-white opacity-0 group-hover:opacity-100 transition-opacity" />
             </TransitionLink>
-            {['MUSIC', 'ART', 'DROPS'].map((item, index) => (
+            <TransitionLink
+              href="/music"
+              className="group relative text-base font-medium tracking-wider transition-colors text-gray-400 hover:text-white"
+            >
+              MUSIC
+              <span className="absolute -bottom-[18px] left-1/2 -translate-x-1/2 w-16 h-[3px] bg-white opacity-0 group-hover:opacity-100 transition-opacity" />
+            </TransitionLink>
+            {['ART', 'DROPS'].map((item, index) => (
               <a
                 key={index}
                 href="#"

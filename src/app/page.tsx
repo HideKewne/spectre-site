@@ -540,7 +540,7 @@ export default function SpectreSystem() {
           </TransitionLink>
 
           {/* Card 2 */}
-          <div className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
+          <TransitionLink href="/music" className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
             <div className="absolute inset-0 bg-[#39FF14]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="corner-border top-0 left-0 border-t-2 border-l-2 rounded-tl-xl"></div>
             <div className="corner-border bottom-0 right-0 border-b-2 border-r-2 rounded-br-xl"></div>
@@ -552,7 +552,7 @@ export default function SpectreSystem() {
               <h3 className="font-orbitron text-xl text-white group-hover:text-[#39FF14] transition-colors">MUSIC</h3>
               <p className="text-[10px] text-gray-400 uppercase tracking-wider font-share-tech">Listen Now</p>
             </div>
-          </div>
+          </TransitionLink>
 
           {/* Card 3 */}
           <TransitionLink href="/contact" className="group relative h-24 border border-[#39FF14]/40 rounded-xl bg-black/50 backdrop-blur-sm flex items-center px-6 gap-4 cursor-pointer overflow-hidden card-hover">
@@ -649,45 +649,39 @@ export default function SpectreSystem() {
         </div>
 
         {/* Carousel Container */}
-        <div className="relative border border-[#39FF14]/30 rounded-xl bg-black/50 backdrop-blur-sm py-8 overflow-hidden">
+        <div className="relative border border-[#39FF14]/30 rounded-xl bg-black/50 backdrop-blur-sm py-6 overflow-hidden">
           <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#39FF14] rounded-tl-xl"></div>
           <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#39FF14] rounded-br-xl"></div>
           <div className="absolute top-0 bottom-0 left-0 w-20 bg-gradient-to-r from-black/90 to-transparent z-10 pointer-events-none"></div>
           <div className="absolute top-0 bottom-0 right-0 w-20 bg-gradient-to-l from-black/90 to-transparent z-10 pointer-events-none"></div>
 
-          <div className="flex gap-16 animate-partner-scroll w-max">
+          <div className="flex gap-20 animate-partner-scroll w-max items-center">
             {[...Array(2)].map((_, setIndex) => (
-              <div key={setIndex} className="flex gap-16">
+              <div key={setIndex} className="flex gap-20 items-center">
                 {[
-                  { name: 'PARTNER ONE', icon: 'globe' },
-                  { name: 'BRAND X', icon: 'star' },
-                  { name: 'STUDIO Z', icon: 'grid' },
-                  { name: 'NEXUS', icon: 'layers' },
-                  { name: 'ECHO LABS', icon: 'sun' },
-                  { name: 'VOID', icon: 'infinity' },
+                  { name: 'EKKO', logo: '/partners/ekko.png' },
+                  { name: 'FPK', logo: '/partners/fpk.png' },
+                  { name: 'HOUSE OF HIPHOP', logo: '/partners/houseofhiphop.png' },
+                  { name: 'HOUSE OF KNOWLEDGE', logo: '/partners/houseofknowledge.png' },
+                  { name: 'GEMEENTE UTRECHT', logo: '/partners/gemeente-utrecht.png' },
+                  { name: 'SWAGJAM', logo: '/partners/swagjam.png' },
+                  { name: 'TIVOLI', logo: '/partners/tivoli.png' },
+                  { name: 'BADEHAUS', logo: '/partners/badehaus.png' },
+                  { name: 'BETON-T / VECHTCLUB', logo: '/partners/betont.png' },
+                  { name: 'HOLYBLAD INC', logo: '/partners/holyblad.png' },
+                  { name: 'STREET CULTURE UTRECHT', logo: '/partners/streetculture.png' },
                 ].map((partner) => (
-                  <div key={`${setIndex}-${partner.name}`} className="flex items-center gap-3 flex-shrink-0 opacity-50 hover:opacity-100 transition-opacity">
-                    <div className="w-10 h-10 border border-[#39FF14]/30 rounded-lg bg-[#39FF14]/5 flex items-center justify-center">
-                      {partner.icon === 'globe' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/></svg>
-                      )}
-                      {partner.icon === 'star' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                      )}
-                      {partner.icon === 'grid' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="M3 9h18"/></svg>
-                      )}
-                      {partner.icon === 'layers' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                      )}
-                      {partner.icon === 'sun' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/></svg>
-                      )}
-                      {partner.icon === 'infinity' && (
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#39FF14" strokeWidth="1.5"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12"/></svg>
-                      )}
-                    </div>
-                    <span className="font-orbitron text-[13px] tracking-[0.1em] text-gray-400">{partner.name}</span>
+                  <div key={`${setIndex}-${partner.name}`} className="flex-shrink-0 opacity-60 hover:opacity-100 transition-opacity">
+                    {partner.logo ? (
+                      <img
+                        src={partner.logo}
+                        alt={partner.name}
+                        className="h-12 w-auto object-contain"
+                        title={partner.name}
+                      />
+                    ) : (
+                      <span className="font-orbitron text-sm tracking-widest text-white" title={partner.name}>{partner.name}</span>
+                    )}
                   </div>
                 ))}
               </div>
